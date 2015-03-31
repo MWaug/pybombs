@@ -20,7 +20,7 @@
 #
 
 import sys;
-from globals import *;
+from pb_globals import *;
 from sysutils import *;
 from inventory import *
 import verbosity as v

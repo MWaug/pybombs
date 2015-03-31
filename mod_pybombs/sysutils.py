@@ -23,7 +23,7 @@ from threading import Thread,Event
 #from subprocess import call;
 import os,re,shutil,time,glob,copy,signal,operator,re,sys
 import subprocess;
-import globals;
+import pb_globals;
 import logging
 from distutils.version import StrictVersion
 
@@ -142,7 +142,7 @@ def monitor(cmd,event):
                 rmrf(cmd.split(' ')[-1])
             elif cmd[0:6] == "svn co":
                 svnclean(cmd.split(' ')[-1])
-        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, env=globals.env)
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, env=pb_globals.env)
         pid = p.pid
         parentPid = pid
         while p.poll() == None:
@@ -190,7 +190,7 @@ def monitor(cmd,event):
             
             if newCpuTime > oldCpuTime:
                 oldCpuTime = newCpuTime
-                event.wait(int(globals.vars['timeout']))
+                event.wait(int(pb_globals.vars['timeout']))
                 if event.isSet():
                     logger.info("monitor: Caught the quit Event. Killing Subprocess. Please wait...")
                     kill_process_tree(p, parentPid)
@@ -213,7 +213,7 @@ def monitor(cmd,event):
                     try:            
                         if int(newWgetSize) > int(oldWgetSize):
                             oldWgetSize = newWgetSize
-                            event.wait(int(globals.vars['timeout']))
+                            event.wait(int(pb_globals.vars['timeout']))
                             if event.isSet():
                                 logger.info("monitor: Caught the quit Event. Killing Subprocess. Please wait...")
                                 kill_process_tree(p, parentPid)
@@ -234,7 +234,7 @@ def monitor(cmd,event):
                     try:                 
                         if int(newGitSize) > int(oldGitSize):
                             oldGitSize = newGitSize
-                            event.wait(int(globals.vars['timeout']))
+                            event.wait(int(pb_globals.vars['timeout']))
                             if event.isSet():
                                 logger.info("monitor: Caught the quit Event. Killing Subprocess. Please wait...")
                                 kill_process_tree(p, parentPid)
@@ -253,7 +253,7 @@ def monitor(cmd,event):
                             event.set()
                             return                    
                     if float(cpuUsage) > 0:
-                        event.wait(int(globals.vars['timeout']))
+                        event.wait(int(pb_globals.vars['timeout']))
                         if event.isSet():
                             logger.info("monitor: Caught the quit Event. Killing Subprocess. Please wait...")
                             kill_process_tree(p, parentPid)
@@ -308,7 +308,7 @@ def shellexec_getout(cmd, throw_ex=True):
     try:
         if not isinstance(cmd, list):
             cmd = [cmd]
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=globals.env);
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=pb_globals.env);
         (out,err) = p.communicate();
         return out;
     except Exception, e:
@@ -332,7 +332,7 @@ def bashexec(cmd, o_proc=None):
     if isinstance(o_proc, output_proc.OutputProcessor):
         extra_popen_args = o_proc.extra_popen_args
     from subprocess import Popen, PIPE
-    p = subprocess.Popen(["bash"], stdin=subprocess.PIPE, shell=True, env=globals.env, **extra_popen_args)
+    p = subprocess.Popen(["bash"], stdin=subprocess.PIPE, shell=True, env=pb_globals.env, **extra_popen_args)
     p.stdin.write(cmd)
     p.stdin.close()
     if isinstance(o_proc, output_proc.OutputProcessor):
@@ -420,10 +420,10 @@ def deb_exists(name, comparator=None, version=None):
                 return False
         except ValueError, e:
             logger.error("deb_exists: fatal error: %s" % (e))
-            globals.die("Please check the recipe for %s" % (name))
+            pb_globals.die("Please check the recipe for %s" % (name))
     else: return False
     print a;
-    globals.die("This should be unreachable: in deb_exists()");
+    pb_globals.die("This should be unreachable: in deb_exists()");
     
     
 def rpm_exists(name, comparator=None, version=None):
@@ -456,10 +456,10 @@ def rpm_exists(name, comparator=None, version=None):
                 return False
         except ValueError, e:
             logger.error("rpm_exists: fatal error: %s" % (e))
-            globals.die("Please check the recipe for %s" % (name))
+            pb_globals.die("Please check the recipe for %s" % (name))
     else: return False
     print a;
-    globals.die("This should be unreachable: in rpm_exists()");    
+    pb_globals.die("This should be unreachable: in rpm_exists()");    
     
 
 def have_deb(name, comparator=None, version=None):
@@ -493,9 +493,9 @@ def have_deb(name, comparator=None, version=None):
                 return False
         except ValueError, e:
             logger.error("have_deb: fatal error: %s" % (e))
-            globals.die("Please check the recipe for %s" % (name))
+            pb_globals.die("Please check the recipe for %s" % (name))
     print a;
-    globals.die("This should be unreachable: in have_deb()");
+    pb_globals.die("This should be unreachable: in have_deb()");
 
 
 def have_rpm(name, comparator=None, version=None):
@@ -526,10 +526,9 @@ def have_rpm(name, comparator=None, version=None):
                 return False
         except ValueError, e:
             logger.error("have_rpm: fatal error: %s" % (e))
-            globals.die("Please check the recipe for %s" % (name))
+            pb_globals.die("Please check the recipe for %s" % (name))
     print a;
-    globals.die("This should be unreachable: in have_rpm()");
-        
+    pb_globals.die("This should be unreachable: in have_rpm()");
 
 def have_debs(pkg_expr_tree):
     if(which("dpkg") == None):

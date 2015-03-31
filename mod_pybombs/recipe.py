@@ -20,7 +20,7 @@
 # Boston, MA 02110-1301, USA.
 #
 
-from globals import *;
+from pb_globals import *;
 from plex import *;
 from sysutils import *;
 import fetch
